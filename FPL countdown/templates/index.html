@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Amazing Battle of FPL</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Main Title Styling */
+        .main-title {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            background: linear-gradient(45deg, #00ff87, #60efff, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 135, 0.5);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1) drop-shadow(0 0 15px rgba(0, 255, 135, 0.4)); }
+            to { filter: brightness(1.3) drop-shadow(0 0 25px rgba(255, 107, 107, 0.6)); }
+        }
+
+        /* Main Container Layout */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            flex-wrap: nowrap; /* Default: no wrap for large screens */
+            padding: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Panel Base Styles (Left, Center, Right) */
+        .left-panel, .countdown-panel, .right-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent shrinking below content */
+        }
+
+        /* Set the desired order and base widths for panels for large screens */
+        .left-panel {
+            width: 280px;
+            order: 1; /* Leftmost */
+        }
+
+        .countdown-panel {
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            flex: 1; /* Allows it to grow and take available space */
+            order: 2; /* Center */
+        }
+
+        .right-panel {
+            width: 400px;
+            order: 3; /* Rightmost */
+            max-height: 800px; /* Limits height for scrolling */
+            overflow-y: auto;
+        }
+
+        /* Panel Content Layering */
+        .panel-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animated Border Effect for Panels */
+        .left-panel::before, .countdown-panel::before, .right-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: rotate 8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Ensure content is above animated border */
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            margin-bottom: 25px;
+        }
+
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+            background: linear-gradient(45deg, #ff5252, #ff9800);
+        }
+
+        /* FPL Logo (Gameweek Header) */
+        .fpl-logo {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 135, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1) drop-shadow(0 0 10px rgba(0, 255, 135, 0.3)); }
+            to { filter: brightness(1.2) drop-shadow(0 0 20px rgba(0, 255, 135, 0.6)); }
+        }
+
+        .deadline-text {
+            font-size: 1em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        /* Countdown Timer Styling */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            padding: 15px;
+            border-radius: 12px;
+            min-width: 80px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .time-unit:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            display: block;
+            line-height: 1;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .time-label {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        /* Panel Section Headings */
+        .panel-heading, .league-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        /* Team Members List */
+        .team-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .team-list li {
+            padding: 6px 10px;
+            margin: 4px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .team-list li:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid #00ff87;
+            transform: translateX(3px);
+        }
+
+        /* Compact Winner Section (Last Season) */
+        .winner-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .winner-title {
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .winner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .trophy-small {
+            font-size: 1.2em;
+        }
+
+        .winner-name-small {
+            font-size: 0.9em;
+            font-weight: bold;
+            padding: 8px 12px;
+            background: linear-gradient(145deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+        }
+
+        /* League Tables */
+        .league-section {
+            margin-bottom: 25px;
+        }
+
+        .league-title {
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .league-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 0.75em;
+        }
+
+        .league-table th, .league-table td {
+            padding: 4px 3px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .league-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.7em;
+            letter-spacing: 0.5px;
+        }
+
+        .league-table tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .league-table td:first-child {
+            font-weight: bold;
+            color: #00ff87;
+            text-align: center;
+            width: 25px;
+        }
+
+        .league-table td:last-child {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Update Notice */
+        .update-notice {
+            text-align: center;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid #60efff;
+        }
+
+        /* Gameweek Winners Table (under countdown) */
+        .gameweek-winners-table-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .gameweek-winners-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .gameweek-winners-table th, .gameweek-winners-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .gameweek-winners-table th:first-child, .gameweek-winners-table td:first-child {
+            text-align: center;
+        }
+
+        .gameweek-winners-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8em;
+        }
+
+        .gameweek-winners-table td {
+            font-size: 0.9em;
+        }
+
+        .gameweek-winners-table tr.winner-row {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Empty state for gameweek winners */
+        .no-winners {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        /* Gameweek Winner Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            max-width: 500px;
+            width: 90%;
+            animation: fadeInScale 0.5s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .popup-close:hover {
+            transform: scale(1.2);
+        }
+
+        .popup-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .popup-winner {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .trophy {
+            font-size: 3em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1400px) {
+            .main-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .left-panel, .countdown-panel, .right-panel {
+                width: 100%;
+                max-width: 600px;
+                margin-bottom: 20px;
+            }
+            .left-panel { order: 1; }
+            .countdown-panel { order: 2; }
+            .right-panel { order: 3; }
+        }
+
+        @media (max-width: 800px) {
+            .main-title {
+                font-size: 1.8em;
+                margin: 15px 0;
+            }
+            .main-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+                padding: 15px;
+            }
+            .left-panel, .countdown-panel, .right-panel {
+                width: 100%;
+                max-width: 100%;
+                padding: 20px;
+            }
+            .left-panel { order: 1; }
+            .countdown-panel { order: 2; }
+            .right-panel { order: 3; }
+            .fpl-logo {
+                font-size: 1.6em;
+            }
+            .time-value {
+                font-size: 1.6em;
+            }
+            .panel-heading, .league-title {
+                font-size: 1.1em;
+            }
+            .league-table, .gameweek-winners-table {
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-title">The Amazing Battle of FPL</h1>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="panel-content">
+                <div class="nav-buttons">
+                    <a href="https://docs.google.com/document/d/1eskmVQOqLLWF_WbWmh_VsfVfU7EGkFar21HkIvDlVRk/edit?usp=sharing" target="_blank" class="nav-button">Rules & Regulations</a>
+                    <a href="https://docs.google.com/spreadsheets/d/1GUJtBF41QvkoIDx62s-G-bftINYlXts48fUA69F2nYk/edit?usp=sharing" target="_blank" class="nav-button">Payment Account</a>
+                </div>
+                
+                <h3 class="panel-heading">Team Members</h3>
+                <ul class="team-list">
+                    {% for member in team_members %}
+                        <li>{{ member }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="countdown-panel">
+            <div class="content">
+                <div class="fpl-logo">⚽ GAMEWEEK {{ next_deadline.gameweek if next_deadline else 'N/A' }}</div>
+                <div class="deadline-text">
+                    Deadline: {{ next_deadline.deadline.strftime('%A %d %B %Y at %H:%M') if next_deadline else 'N/A' }}
+                </div>
+                
+                <div id="countdown" class="countdown">
+                    <div class="time-unit">
+                        <span id="days" class="time-value">00</span>
+                        <span class="time-label">Days</span>
+                    </div>
+                    <div class="time-unit">
+                        <span id="hours" class="time-value">00</span>
+                        <span class="time-label">Hours</span>
+                    </div>
+                    <div class="time-unit">
+                        <span id="minutes" class="time-value">00</span>
+                        <span class="time-label">Minutes</span>
+                    </div>
+                    <div class="time-unit">
+                        <span id="seconds" class="time-value">00</span>
+                        <span class="time-label">Seconds</span>
+                    </div>
+                </div>
+                
+                <div id="message"></div>
+
+                <div class="gameweek-winners-table-section">
+                    <h4 class="league-title">Gameweek Winners</h4>
+                    {% if gameweek_winners %}
+                        <table class="gameweek-winners-table">
+                            <thead>
+                                <tr>
+                                    <th>GW</th>
+                                    <th>Winner</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for gw, winner, points in gameweek_winners %}
+                                    <tr {% if loop.last %}class="winner-row"{% endif %}>
+                                        <td>{{ gw }}</td>
+                                        <td>{{ winner }}</td>
+                                        <td>{{ points }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="no-winners">No gameweek winners yet. Check back after gameweek 1!</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="panel-content">
+                <div class="winner-section">
+                    <div class="winner-title">Last Season (2024/25) Winner </div>
+                    <div class="winner-content">
+                        <span class="trophy-small">🏆</span>
+                        <span class="winner-name-small">Arbind Chiluwal</span>
+                    </div>
+                </div>
+                
+                <div class="league-section">
+                    <h4 class="league-title">Classic League (2025/2026)</h4>
+                    <table class="league-table">
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Manager</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pos, manager, points in classic_table %}
+                            <tr>
+                                <td>{{ pos }}</td>
+                                <td>{{ manager }}</td>
+                                <td>{{ points }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="update-notice">
+                        Points will be updated after the end of each Gameweek.
+                    </div>
+                </div>
+
+                <div class="league-section">
+                    <h4 class="league-title">H2H League (2025/2026)</h4>
+                    <table class="league-table">
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Manager</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pos, manager, points in h2h_table %}
+                            <tr>
+                                <td>{{ pos }}</td>
+                                <td>{{ manager }}</td>
+                                <td>{{ points }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="update-notice">
+                        Points will be updated after the end of each Gameweek.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gameweek Winner Popup -->
+    <div id="winnerPopup" class="popup-overlay">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()">✖</button>
+            <div class="trophy">🏆</div>
+            <div class="popup-title">Congratulations!</div>
+            <div class="popup-winner">
+                <span id="popupWinnerName">
+                    {% if winner and winner.gameweek >= 1 %}
+                        {{ winner.winner }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </span>
+            </div>
+            <p>is the Gameweek <span id="popupGameweek">{{ winner.gameweek if winner and winner.gameweek >= 1 else 'N/A' }}</span> winner with <span id="popupPoints">{{ winner.points if winner and winner.gameweek >= 1 else 'N/A' }}</span> points!</p>
+        </div>
+    </div>
+
+    <script>
+        // Set the deadline date and time
+        const deadline = new Date("{{ next_deadline.deadline.isoformat() if next_deadline else '2099-01-01T00:00:00' }}").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = deadline - now;
+
+            const daysEl = document.getElementById("days");
+            const hoursEl = document.getElementById("hours");
+            const minutesEl = document.getElementById("minutes");
+            const secondsEl = document.getElementById("seconds");
+            const messageDiv = document.getElementById('message');
+            const countdownDiv = document.querySelector('.countdown');
+
+            if (timeLeft > 0) {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                daysEl.textContent = String(days).padStart(2, '0');
+                hoursEl.textContent = String(hours).padStart(2, '0');
+                minutesEl.textContent = String(minutes).padStart(2, '0');
+                secondsEl.textContent = String(seconds).padStart(2, '0');
+
+                if (timeLeft < 60 * 60 * 1000) { // Less than 1 hour
+                    if (!messageDiv.innerHTML.includes('⚠️')) {
+                        messageDiv.innerHTML = '<div style="background: linear-gradient(45deg, #ff6b6b, #ffa500); padding: 10px; border-radius: 8px; margin-top: 15px; font-weight: bold;">⚠️ LESS THAN 1 HOUR REMAINING!</div>';
+                    }
+                } else if (timeLeft < 6 * 60 * 60 * 1000) { // Less than 6 hours
+                    if (!messageDiv.innerHTML.includes('⏰')) {
+                        messageDiv.innerHTML = '<div style="background: linear-gradient(45deg, #ff6b6b, #ffa500); padding: 10px; border-radius: 8px; margin-top: 15px; font-weight: bold;">⏰ Deadline approaching soon!</div>';
+                    }
+                }
+            } else {
+                // Deadline has passed
+                countdownDiv.innerHTML = '<div style="color: #ff6b6b; font-size: 1.5em; font-weight: bold;">DEADLINE HAS PASSED!</div>';
+                messageDiv.innerHTML = '<div style="background: linear-gradient(45deg, #ff6b6b, #ffa500); padding: 15px; border-radius: 10px; margin-top: 20px; font-weight: bold;">The FPL deadline has expired. Good luck!</div>';
+            }
+        }
+        
+        // Function to show the gameweek winner popup
+        function showPopup() {
+            const popup = document.getElementById('winnerPopup');
+            if (popup) {
+                popup.style.display = 'flex';
+                console.log('Popup should be visible now');
+            }
+        }
+
+        // Function to close the gameweek winner popup
+        function closePopup() {
+            const popup = document.getElementById('winnerPopup');
+            if (popup) {
+                popup.style.display = 'none';
+            }
+        }
+
+        // Show the gameweek winner popup on page load, if a winner exists
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            
+            // Get winner data from server
+            const hasWinner = {{ 'true' if winner and winner.gameweek >= 1 else 'false' }};
+            const winnerName = "{{ winner.winner if winner and winner.gameweek >= 1 else '' }}";
+            const gameweek = {{ winner.gameweek if winner and winner.gameweek >= 1 else 0 }};
+            const points = {{ winner.points if winner and winner.gameweek >= 1 else 0 }};
+            
+            console.log('Winner data:', {hasWinner, winnerName, gameweek, points});
+            
+            // Show popup if we have a valid winner
+            if (hasWinner && winnerName.trim() !== '' && gameweek >= 1) {
+                console.log('Showing popup for winner:', winnerName);
+                setTimeout(showPopup, 1000); // Show popup after 1 second delay
+            } else {
+                console.log('No valid winner data, popup will not be shown');
+            }
+        });
+
+        // Update countdown immediately and then every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        
+        // Close popup when clicking outside of it
+        document.getElementById('winnerPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+    </script>
