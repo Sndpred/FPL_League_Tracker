@@ -39,7 +39,7 @@ FPL-countdown/
 │   ├── create_tables.py
 │   └── ...
 └── templates/
-└── index.html
+    └── index.html
 
 
 ## How to Run Locally
