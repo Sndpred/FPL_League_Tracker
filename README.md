@@ -22,24 +22,24 @@ This application is built for FPL private leagues and provides a central hub for
     - **Frontend**: HTML, CSS, JavaScript
 
 ## Project Structure
-FPL countdown/
-├── app.py                      # Main Flask application to run the web server
-├── requirements.txt            # Python dependencies
-├── Procfile                    # Used by hosting platforms to define the web process
+FPL-countdown/
+├── app.py
+├── requirements.txt
+├── Procfile
 ├── data/
 │   ├── processed/
-│   │   ├── classic_league.csv  # Processed classic league data
-│   │   └── h2h_league.csv      # Processed H2H league data
+│   │   ├── classic_league.csv
+│   │   └── h2h_league.csv
 │   └── raw/
-│       └── ...                 # Raw JSON data from FPL API fetches
+│       └── ...
 ├── scripts/
-│   ├── fetch_leagues.py        # Fetches raw data from FPL API
-│   ├── process_leagues.py      # Cleans and processes raw data into CSVs
-│   ├── insert_processed_data.py# Inserts processed data into the database
-│   ├── create_tables.py        # Database schema script
+│   ├── fetch_leagues.py
+│   ├── process_leagues.py
+│   ├── insert_processed_data.py
+│   ├── create_tables.py
 │   └── ...
 └── templates/
-└── index.html              # Frontend template for the web page
+└── index.html
 
 
 ## How to Run Locally
@@ -63,6 +63,7 @@ FPL countdown/
 4.  **Run the Data Pipeline (Manual Execution)**:
     - Run the scripts in the correct order to populate the database:
     ```bash
+    python scripts/create_tables.py
     python scripts/fetch_leagues.py
     python scripts/process_leagues.py
     python scripts/insert_processed_data.py
@@ -74,11 +75,7 @@ FPL countdown/
     ```
     (Note: You may need to specify a `FLASK_APP` environment variable: `export FLASK_APP=app.py`)
 
-## Deployment (Free Option)
 
-This project can be deployed for free on cloud platforms that offer a free tier for both a Python web service and a PostgreSQL database, such as **Render**. The project is pre-configured with a `Procfile` for easy deployment.
+**Future Work**
+Deploy and set up a cron job to automate the data pipeline scripts. This project can be deployed for free on cloud platforms that offer a free tier for both a Python web service and a PostgreSQL database, such as **Render**. 
 
-1.  **Create a Render account** and connect your GitHub repository.
-2.  **Create a PostgreSQL database** on Render's free tier.
-3.  **Create a Web Service** for your Flask app, connecting it to your repository and setting up the environment variables for your database credentials.
-4.  **Set up a Cron Job** on Render to automate the data pipeline scripts (`fetch_leagues.py`, `process_leagues.py`, and `insert_processed_data.py`) to run on a regular schedule.
