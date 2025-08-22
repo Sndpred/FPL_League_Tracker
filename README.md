@@ -22,24 +22,26 @@ This application is built for FPL private leagues and provides a central hub for
     - **Frontend**: HTML, CSS, JavaScript
 
 ## Project Structure
+```text
 FPL-countdown/
 ├── app.py
 ├── requirements.txt
 ├── Procfile
 ├── data/
-│ ├── processed/
-│ │ ├── classic_league.csv
-│ │ └── h2h_league.csv
-│ └── raw/
-│ └── ...
+│   ├── processed/
+│   │   ├── classic_league.csv
+│   │   └── h2h_league.csv
+│   └── raw/
+│       └── ...
 ├── scripts/
-│ ├── fetch_leagues.py
-│ ├── process_leagues.py
-│ ├── insert_processed_data.py
-│ ├── create_tables.py
-│ └── ...
+│   ├── fetch_leagues.py
+│   ├── process_leagues.py
+│   ├── insert_processed_data.py
+│   ├── create_tables.py
+│   └── ...
 └── templates/
-└── index.html
+    └── index.html
+
 
 
 ## How to Run Locally
