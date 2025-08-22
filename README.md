@@ -1,14 +1,14 @@
-# FPL_League_Tracker
+**FPL_League_Tracker**
 An application that automates the collection, processing, and display of Fantasy Premier League (FPL) data for a private league. It features a scheduled data pipeline, a PostgreSQL database, and a dynamic web interface to showcase league standings, gameweek winners, and a live countdown to the next deadline.
 
 
-## Project Overview
+**Project Overview**
 
-"The Amazing Battle of FPL" is a full-stack web application designed to track and visualize data for a private Fantasy Premier League (FPL) competition. The project automates the entire process, from fetching the latest FPL data to updating a public-facing website with league standings and gameweek winners.
+The application is designed to track and visualize data for a private Fantasy Premier League (FPL) competition. The project automates the entire process, from fetching the latest FPL data to updating a public-facing website with league standings and gameweek winners.
 
 This application is built for FPL private leagues and provides a central hub for members to view updated standings and key information without manually checking the FPL website.
 
-## Features
+**Features**
 
 - **Automated Data Pipeline**: A scheduled set of Python scripts fetches raw league data from the official FPL API, processes it, and loads it into a PostgreSQL database.
 - **Dynamic Leaderboards**: The web interface displays real-time standings for both Classic and Head-to-Head leagues, with data pulled directly from the database.
@@ -44,7 +44,7 @@ FPL-countdown/
 
 
 
-## How to Run Locally
+**How to Run Locally**
 
 1.  **Clone the Repository**:
     ```bash
