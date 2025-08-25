@@ -23,41 +23,44 @@ This application is designed for FPL private leagues and serves as a central hub
     - **Frontend**: HTML, CSS, JavaScript
 
 
-**How to Run Locally**
+ 
+**Prerequisites**
+- Python 3.x
+- PostgreSQL
 
-1.  **Clone the Repository**:
-    ```bash
-    git clone [https://github.com/sndpred/FPL_League_Tracker.git]
-    cd FPL-countdown
-    ```
 
-2.  **Set up the Database**:
-    - Install and run a local PostgreSQL instance (e.g., using Docker or a local installer).
-    - Update the `db_params` in `app.py`, `create_tables.py`, and `insert_processed_data.py` with your local database credentials.
-    - Run the table creation script: `python scripts/create_tables.py`
+**Installation**
+- Clone this repository to the local machine.
+- Navigate to the project directory and install the required Python libraries using pip:
+pip install -r requirements.txt
 
-3.  **Install Dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+**Local Usage**
 
-4.  **Run the Data Pipeline (Manual Execution)**:
-    - Run the scripts in the correct order to populate the database:
-    ```bash
-    python scripts/create_tables.py
-    python scripts/fetch_leagues.py
-    python scripts/process_leagues.py
-    python scripts/insert_processed_data.py
-    ```
+Follow these steps to set up and run the application:
 
-5.  **Start the Flask Application**:
-    ```bash
-    flask run
-    ```
-    (Note: You may need to specify a `FLASK_APP` environment variable: `export FLASK_APP=app.py`)
+1. **Create Database Tables:** Run the create_tables.py script to set up the necessary tables in your PostgreSQL database.
+   python scripts/create_tables.py
+   
+   This script will create tables for the classic league, h2h league, gameweek winners, and FPL deadlines.
+
+2. **Fetch Raw Data:** Run the fetch_leagues.py script to pull the latest league data from the official FPL API.
+   python scripts/fetch_leagues.py
+
+3. **Process Data:** Execute the process_leagues.py script to clean and process the raw JSON files into a structured format (CSV files).
+   python scripts/process_leagues.py
+
+4. **Insert Data into Database:** Run the insert_processed_data.py script to populate the PostgreSQL database with the processed data.
+   python scripts/insert_processed_data.py
+
+5. **Run the Web Application:** Start the Flask server by running the app.py file.
+   python app.py
+   
+   The application will be accessible at http://127.0.0.1:5000/
+
 
 
 **Future Work**
+
 Deploy and set up a cron job to automate the execution of the data pipeline scripts. This project can be deployed for free on cloud platforms that offer a free tier for both a Python web service and a PostgreSQL database, such as **Render**. 
 
 ## Project Structure
