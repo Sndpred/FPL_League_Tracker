@@ -6,13 +6,14 @@ An application that automates the collection, processing, and display of Fantasy
 
 The application is designed to track and visualize data for a private Fantasy Premier League (FPL) competition. The project automates the entire process, from fetching the latest FPL data to updating a public-facing website with league standings and gameweek winners.
 
-This application is built for FPL private leagues and provides a central hub for members to view updated standings and key information without manually checking the FPL website.
+This application is designed for FPL private leagues and serves as a central hub, allowing members to view updated standings and key information without needing to check the FPL website.
+
 
 **Features**
 
 - **Automated Data Pipeline**: A scheduled set of Python scripts fetches raw league data from the official FPL API, processes it, and loads it into a PostgreSQL database.
 - **Dynamic Leaderboards**: The web interface displays real-time standings for both Classic and Head-to-Head leagues, with data pulled directly from the database.
-- **Gameweek Winners**: The application automatically identifies the top-scoring manager each gameweek and displays them on the site. A pop-up congratulates the latest winner.
+- **Gameweek Winners**: The application automatically identifies the top-scoring managers each gameweek and displays them on the site. A pop-up congratulates the latest winner.
 - **Live Countdown Timer**: A live countdown shows the time remaining until the next FPL deadline, keeping managers on track.
 - **Technology Stack**: Built using a modern and efficient stack:
     - **Backend**: Python, Flask
@@ -20,28 +21,6 @@ This application is built for FPL private leagues and provides a central hub for
     - **Data Processing**: `pandas`, Requests
     - **Web Server**: Gunicorn
     - **Frontend**: HTML, CSS, JavaScript
-
-## Project Structure
-```text
-FPL-countdown/
-├── app.py
-├── requirements.txt
-├── Procfile
-├── data/
-│   ├── processed/
-│   │   ├── classic_league.csv
-│   │   └── h2h_league.csv
-│   └── raw/
-│       └── ...
-├── scripts/
-│   ├── fetch_leagues.py
-│   ├── process_leagues.py
-│   ├── insert_processed_data.py
-│   ├── create_tables.py
-│   └── ...
-└── templates/
-    └── index.html
-
 
 
 **How to Run Locally**
@@ -79,5 +58,30 @@ FPL-countdown/
 
 
 **Future Work**
-Deploy and set up a cron job to automate the data pipeline scripts. This project can be deployed for free on cloud platforms that offer a free tier for both a Python web service and a PostgreSQL database, such as **Render**. 
+Deploy and set up a cron job to automate the execution of the data pipeline scripts. This project can be deployed for free on cloud platforms that offer a free tier for both a Python web service and a PostgreSQL database, such as **Render**. 
+
+## Project Structure
+```text
+FPL-countdown/
+├── app.py
+├── requirements.txt
+├── Procfile
+├── data/
+│   ├── processed/
+│   │   ├── classic_league.csv
+│   │   └── h2h_league.csv
+│   └── raw/
+│       └── ...
+├── scripts/
+│   ├── fetch_leagues.py
+│   ├── process_leagues.py
+│   ├── insert_processed_data.py
+│   ├── create_tables.py
+│   └── ...
+└── templates/
+    └── index.html
+
+
+
+
 
