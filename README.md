@@ -27,7 +27,7 @@ This application is designed for FPL private leagues and serves as a central hub
 
 1.  **Clone the Repository**:
     ```bash
-    git clone [https://github.com/your-username/your-repo-name.git](https://github.com/sndpred/FPL_League_Tracker.git)
+    git clone [https://github.com/sndpred/FPL_League_Tracker.git]
     cd FPL-countdown
     ```
 
